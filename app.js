@@ -1,5 +1,5 @@
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.11.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
 import {
   collection,
   addDoc,
@@ -11,71 +11,77 @@ import {
   orderBy,
   doc,
   updateDoc,
-} from "https://www.gstatic.com/firebasejs/9.11.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBll2fSj_nyxIy5V4lfq4JwopdekNhLifo",
-  authDomain: "web-nd-mobile-82734.firebaseapp.com",
-  projectId: "web-nd-mobile-82734",
-  storageBucket: "web-nd-mobile-82734.appspot.com",
-  messagingSenderId: "487981162383",
-  appId: "1:487981162383:web:f13b268996e0fcd51975fa",
-  measurementId: "G-7R1MMWNJV7"
+  apiKey: "AIzaSyD_I8nBVkxWjiNoQqjmDoNZOnqQwsyHNlo",
+    authDomain: "todoapp-js-f1aed.firebaseapp.com",
+    projectId: "todoapp-js-f1aed",
+    storageBucket: "todoapp-js-f1aed.appspot.com",
+    messagingSenderId: "44785612273",
+    appId: "1:44785612273:web:4d20fd901e9c53500f4050",
+    measurementId: "G-QDNH6PX6W9"
 };
 
-
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore();
-// console.log(db);
 
-// let sub;
-  let arr1 = []
+
+let arr1 = []
 let arr = []
 let add = document.getElementById('add_btn')
-// console.log(add);
 let todo_value = document.getElementById('todo-get')
 let todoList = document.getElementById('list')
 
+
 add.addEventListener("click", async () => {
-
-  let loader = document.getElementById('load')
-  loader.style.display = 'block'
-  todoList.innerHTML = ""
-  arr = [];
-  let docref = collection(db, "todo app")
-  const docRef = await addDoc(docref, {
-    todo_value: todo_value.value,
-    timeStamp: new Date()
-  });
-  console.log("Document written with ID:", docRef.id)
-
-  // 
-  // let q = query(docRef, orderBy("timestamp", "asc"));
-  // console.log(q);
-  let getRef = collection(db, "todo app")
-  const querySnapshot =await getDocs(getRef)
-  querySnapshot.forEach((doc) => {
-    arr.push(doc.id)
-    console.log(doc.id, " => ", doc.data());
-
+  if(todo_value.value){
+    // swal("Good job!", "You clicked the button!", "error")
     let loader = document.getElementById('load')
-    loader.style.display = 'none'
-
-    todoList.innerHTML +=
-      `<li id="li">${doc.data().todo_value}  <button onclick="delete_todo('${doc.id}')">Delete</button>  <button onclick="edit_todo('${doc.id}')" >Edit</button></li>
-      `;
+    loader.style.display = 'block'
+    todoList.innerHTML = ""
+    arr = [];
+    let docref = collection(db, "todo app")
+    const docRef = await addDoc(docref, {
+      todo_value: todo_value.value,
+      timeStamp: new Date()
+    });
+    console.log("Document written with ID:", docRef.id)
   
-  });
+  
+    let getRef = collection(db, "todo app" )
+    const querySnapshot =await getDocs(getRef)
+    querySnapshot.forEach((doc) => {
+      arr.push(doc.id)
+      console.log(doc.id, " => ", doc.data());
+  
+      let loader = document.getElementById('load')
+      loader.style.display = 'none'
+      
+    // todo_value.value = ""
+
+      todoList.innerHTML +=
+      `<li id="li">${doc.data().todo_value} 
+      <button onclick="delete_todo('${doc.id}')">✖</button>
+      <button onclick="edit_todo('${doc.id}',)" >✍</button></li>
+      `;
+      
+    });
+
+  }else{
+    swal("Error!", "please fill", "error")
+  }
   
 })
 
 
-let window_load =async()=>{
+ window.onload = async()=>{
+
 let bodyloader = document.getElementById('body_loader')
 bodyloader.style.display = "none"
 let maindiv = document.getElementById('main_div')
 maindiv.style.display = "block"
+
   let getRef = collection(db, "todo app")
   // console.log(getRef);
   const querySnapshot = await getDocs(getRef)
@@ -86,34 +92,33 @@ maindiv.style.display = "block"
     console.log(doc.id, " => ", doc.data());
     todoList.innerHTML +=
     `<li id="del_li">${doc.data().todo_value}
-    <button id="del_btn" onclick="delete_todo('${doc.id}')">Delete</button>  <button id="edit_btn" onclick="edit_todo('${doc.id}')" >Edit</button></li> `;
+    <button id="del_btn" onclick="delete_todo('${doc.id}')">✖</button> 
+     <button id="edit_btn" onclick="edit_todo('${doc.id}')">✍</button></li> 
+     `;
 
+  
 }
 
 )}
-window.window_load = window_load
+// window.window_load = window_load
 
 
 
 let delete_todo=(id)=>{
-  // console.log("Ahmed nikal");
   deleteDoc(doc(db, "todo app", id));
   console.log(id);
-  // let li = document.getElementById('del_li')
-  // li.innerHTML = ""
 event.target.parentNode.remove()
 }
 window.delete_todo = delete_todo
 
 
 let edit_todo= async(id,oldValue)=>{
-  let prmp = prompt("enter", oldValue)
+  let prmp = prompt('enter', oldValue)
   let edit = event.target.parentNode
   edit.innerHTML = `<li id="del_li">${prmp}
-  <button id="del_btn" onclick="delete_todo('${doc.id}')">Delete</button>  <button id="edit_btn" onclick="edit_todo('${doc.id}')" >Edit</button></li> `;
+  <button id="del_btn" onclick="delete_todo('${doc.id}')">✖</button> 
+   <button id="edit_btn" onclick="edit_todo('${doc.id}')" >✍</button></li> `;
   
-// console.log( event.target.parentNode);
-// console.log(prmp);
   const washingtonRef = doc(db, "todo app", id);
 await updateDoc(washingtonRef, {
   todo_value:prmp
@@ -127,19 +132,11 @@ window.edit_todo = edit_todo
 
 let delall = document.getElementById('del_all')
 delall.addEventListener("click" ,() => {
-  // console.log("dddddd");
-  // console.log(arr.length);
   todoList.innerHTML = ""
 for(var i=0; i < arr.length; i++){
   console.log(arr.length);
    deleteDoc(doc(db, "todo app", arr[i]));
    console.log(deleteDoc(doc(db, "todo app", arr[i])));
 }
-// console.log(arr.length);
-// let forValue =arr.forEach(function (data,index) {
-//   console.log(data,index);
-
-// })
-// console.log(data,index);
 
 })
